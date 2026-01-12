@@ -1,9 +1,11 @@
+def gv
+
 pipeline {
     agent any
     // tools{
     //     // maven "Maven-3.9"
     // }
-    parameters{
+    parameters {
         // string(name:'VERSION', defaultValue:'', description:'version to deploy on prod')
         choice(name:'VERSION', choices:['1.1.0', '1.2.0', '1.3.0'], description:'')
         booleanParam(name:'executeTests', defaultValue:true, description:'')
@@ -14,8 +16,18 @@ pipeline {
     // // SERVER_CREDENTIALS = credentials('server-credentials')
     // }
     stages {
+        stage('init') {
+            steps {
+                script {
+                    gv = load 'script.groovy'
+                }
+            }
+        }
         stage('build') {
             steps {
+                script {
+                    gv.buildApp()
+                }
                 echo 'building the application...'
             // echo "building version ${NEW_VERSION}"
             }
@@ -29,13 +41,16 @@ pipeline {
                     }
                 }
                 steps {
-                    echo 'testing the application...'
+                    script {
+                    gv.testApp()
+                    }
                 }
             }
                 stage('deploy') {
                     steps {
-                        echo 'deploying the application...'
-                        echo "deploying the application ${params.VERSION}"
+                    script {
+                        gv.deployApp()
+                    }
                     // withCredentials([
                     //     usernamePassword(credentials:'server-credentials', usernameVariable:USER, passwordVariable:PWD)
                     // ]) {
