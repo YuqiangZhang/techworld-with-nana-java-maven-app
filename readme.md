@@ -1,5 +1,5 @@
 ## java-maven-app
-
+## test
 As part of the course we deploy a maven application to a digital ocean droplet.
 See below the steps to deploy the application I toke.
 
