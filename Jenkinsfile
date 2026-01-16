@@ -31,13 +31,14 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    echo 'building the docker image...   '
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable:'PASS', usernameVariable:'USER')]) {
-                    sh """
-                        docker build -t 0yorkzhang0/demo-app:${IMAGE_NAME} .
-                        echo \$PASS | docker login -u \$USER --password-stdin
-                        docker push 0yorkzhang0/demo-app:${IMAGE_NAME}
-                    """
+                    echo 'building the docker image...'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                        sh """#!/bin/bash
+                            set -e
+                            docker build -t 0yorkzhang0/demo-app:${IMAGE_NAME} .
+                            echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                            docker push 0yorkzhang0/demo-app:${IMAGE_NAME}
+                        """
                     }
                 }
             }
