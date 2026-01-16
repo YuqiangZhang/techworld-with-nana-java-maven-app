@@ -9,15 +9,22 @@ pipeline {
                 steps {
                     script {
                         echo 'incrementing app version...'
-                        sh '''
-                            mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit
+                        sh '''#!/bin/bash
+                            mvn build-helper:parse-version versions:set -DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion} versions:commit
                         '''
-                        def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
-                        env.IMAGE_NAME = matcher[0][1] + '-' + env.BUILD_NUMBER
+                        // 确认 pom.xml 已更新
+                        sh 'cat pom.xml'
+
+                        def matcher = readFile('pom.xml') =～ '<version>(.+)</version>'
+                        if (matcher) {
+                            env.IMAGE_NAME = matcher[0][1] + '-' + env.BUILD_NUMBER
+                            echo "New image name is ${env.IMAGE_NAME}"
+                        } else {
+                            error 'Failed to parse version from pom.xml'
+                        }
                     }
                 }
             }
-
             stage('build app') {
                 steps {
                     script {
