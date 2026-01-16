@@ -14,7 +14,7 @@ pipeline {
                         versions:commit'
                     def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                     def version = matcher[0][1]
-                    IMAGE_NAME = "$version - $BUILD_NUMBER"
+                    IMAGE_NAME = "${version}-${BUILD_NUMBER}"
                 }
             }
         }
