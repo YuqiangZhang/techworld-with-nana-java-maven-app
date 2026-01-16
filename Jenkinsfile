@@ -15,7 +15,7 @@ pipeline {
                         // 确认 pom.xml 已更新
                         sh 'cat pom.xml'
 
-                        def matcher = readFile('pom.xml') =～ '<version>(.+)</version>'
+                        def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                         if (matcher) {
                             env.IMAGE_NAME = matcher[0][1] + '-' + env.BUILD_NUMBER
                             echo "New image name is ${env.IMAGE_NAME}"
